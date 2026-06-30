@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Project data / artifacts
+database.db
+data/images/*
+!data/images/.gitkeep
+data/debug/
+data/_tmp_*.db
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.idea/
+.vscode/

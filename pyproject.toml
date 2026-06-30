@@ -1,0 +1,12 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "data", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # line length is enforced softly via formatter, not as an error
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
