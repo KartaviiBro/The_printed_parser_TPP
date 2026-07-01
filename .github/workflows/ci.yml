@@ -33,3 +33,8 @@ jobs:
 
       - name: Run tests (pytest)
         run: pytest
+
+      - name: Validate DB migrations
+        env:
+          TPP_DATABASE_URL: sqlite:///./ci_migrations.db
+        run: alembic upgrade head

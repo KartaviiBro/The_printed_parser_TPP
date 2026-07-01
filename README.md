@@ -95,6 +95,10 @@ python main.py printables --headful --limit 100
 python webapp.py                  # http://127.0.0.1:8000
 ```
 
+> **Just want to see it?** `python webapp.py --demo` seeds realistic sample data
+> (models, hype scores and trend charts) and opens the dashboard — no scraping or
+> network required.
+
 CLI options:
 
 ```bash
@@ -102,6 +106,18 @@ python main.py --list                  # list registered platforms
 python main.py --all --limit 100       # scrape every platform
 python main.py makerworld --debug      # verbose logging
 ```
+
+## Database migrations
+
+The schema is managed with **Alembic**. `init_db()` (used by the quick-start and
+tests) simply creates the tables; on an existing database, apply migrations with:
+
+```bash
+alembic upgrade head        # apply migrations
+alembic revision --autogenerate -m "describe change"   # after editing models
+```
+
+CI validates that migrations apply cleanly on every push.
 
 ## Run with Docker
 

@@ -644,10 +644,18 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--no-browser", action="store_true")
+    parser.add_argument(
+        "--demo", action="store_true",
+        help="Seed sample data before serving (works offline).",
+    )
     args = parser.parse_args()
 
     setup_logging()
     init_db()  # ensure schema (incl. metric_snapshots) exists
+    if args.demo:
+        from demo import load_demo_data
+
+        log.info("Loaded %d demo models", load_demo_data())
     url = f"http://{args.host}:{args.port}"
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     log.info("Web UI running at %s  (Ctrl+C to stop)", url)

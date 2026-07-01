@@ -11,6 +11,7 @@ data/images/*
 !data/images/.gitkeep
 data/debug/
 data/_tmp_*.db
+ci_migrations.db
 
 # Tooling
 .pytest_cache/

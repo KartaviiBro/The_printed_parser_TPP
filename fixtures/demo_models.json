@@ -1,0 +1,74 @@
+[
+  {
+    "source": "printables", "external_id": "demo-p1",
+    "title": "Benchy — Calibration Boat",
+    "source_url": "https://www.printables.com/model/demo-p1-benchy",
+    "remote_image_url": "https://picsum.photos/seed/tpp-p1/240/180",
+    "description": "The classic 3D-printer torture test and calibration model.",
+    "downloads_count": 45230, "likes_count": 3180, "published_at": "2026-05-04T10:00:00+00:00"
+  },
+  {
+    "source": "printables", "external_id": "demo-p2",
+    "title": "Articulated Dragon (print-in-place)",
+    "source_url": "https://www.printables.com/model/demo-p2-dragon",
+    "remote_image_url": "https://picsum.photos/seed/tpp-p2/240/180",
+    "description": "Flexible articulated dragon, no supports needed.",
+    "downloads_count": 38110, "likes_count": 2910, "published_at": "2026-05-18T09:30:00+00:00"
+  },
+  {
+    "source": "printables", "external_id": "demo-p3",
+    "title": "Desk Cable Organizer",
+    "source_url": "https://www.printables.com/model/demo-p3-cable-organizer",
+    "remote_image_url": "https://picsum.photos/seed/tpp-p3/240/180",
+    "description": "Keeps desk cables tidy; clips onto the table edge.",
+    "downloads_count": 12040, "likes_count": 905, "published_at": "2026-06-02T14:15:00+00:00"
+  },
+  {
+    "source": "makerworld", "external_id": "demo-m1",
+    "title": "Modular Drawer System",
+    "source_url": "https://makerworld.com/en/models/demo-m1",
+    "remote_image_url": "https://picsum.photos/seed/tpp-m1/240/180",
+    "description": "Stackable, parametric drawer system for small parts.",
+    "downloads_count": 22350, "likes_count": 1510, "published_at": "2026-05-10T08:00:00+00:00"
+  },
+  {
+    "source": "makerworld", "external_id": "demo-m2",
+    "title": "Adjustable Phone Stand",
+    "source_url": "https://makerworld.com/en/models/demo-m2",
+    "remote_image_url": "https://picsum.photos/seed/tpp-m2/240/180",
+    "description": "Multi-angle phone stand with cable pass-through.",
+    "downloads_count": 31680, "likes_count": 2130, "published_at": "2026-05-25T11:45:00+00:00"
+  },
+  {
+    "source": "makerworld", "external_id": "demo-m3",
+    "title": "Gridfinity Bins Set",
+    "source_url": "https://makerworld.com/en/models/demo-m3",
+    "remote_image_url": "https://picsum.photos/seed/tpp-m3/240/180",
+    "description": "Assorted Gridfinity storage bins, 1x1 to 2x3.",
+    "downloads_count": 27500, "likes_count": 1820, "published_at": "2026-06-08T16:20:00+00:00"
+  },
+  {
+    "source": "cults3d", "external_id": "low-poly-fox",
+    "title": "Low-Poly Fox",
+    "source_url": "https://cults3d.com/en/3d-model/art/low-poly-fox",
+    "remote_image_url": "https://picsum.photos/seed/tpp-c1/240/180",
+    "description": "Decorative low-poly fox figurine.",
+    "downloads_count": 8010, "likes_count": 640, "published_at": "2026-05-14T12:00:00+00:00"
+  },
+  {
+    "source": "cults3d", "external_id": "mech-keeb-case",
+    "title": "Mechanical Keyboard Case (60%)",
+    "source_url": "https://cults3d.com/en/3d-model/gadget/mech-keeb-case",
+    "remote_image_url": "https://picsum.photos/seed/tpp-c2/240/180",
+    "description": "60% mechanical keyboard case, hot-swap friendly.",
+    "downloads_count": 5420, "likes_count": 415, "published_at": "2026-05-29T13:10:00+00:00"
+  },
+  {
+    "source": "cults3d", "external_id": "geo-planter",
+    "title": "Geometric Planter",
+    "source_url": "https://cults3d.com/en/3d-model/home/geo-planter",
+    "remote_image_url": "https://picsum.photos/seed/tpp-c3/240/180",
+    "description": "Faceted geometric planter with drainage tray.",
+    "downloads_count": 6890, "likes_count": 525, "published_at": "2026-06-11T09:05:00+00:00"
+  }
+]
