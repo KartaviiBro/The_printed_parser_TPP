@@ -10,3 +10,4 @@ ignore = ["E501"]  # line length is enforced softly via formatter, not as an err
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+pythonpath = ["."]  # make project root importable under bare `pytest` (as CI runs it)
