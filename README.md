@@ -192,7 +192,6 @@ normalisation, upserts — is unit-tested. CI runs lint + tests on every push
 - [x] Metric history (`metric_snapshots`) → real trending charts
 - [x] CSV / JSON export (filtered)
 - [x] FastAPI REST layer with OpenAPI docs
-- [ ] Detail-page enrichment (print time, material, weight)
 
 ## Note on responsible scraping
 
