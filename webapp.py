@@ -72,8 +72,8 @@ def _run_job(source: str, limit: int, headful: bool) -> None:
         scraper = SCRAPERS[source](headless=not headful)
         models = asyncio.run(scraper.run(limit=limit))
         JOB["scraped"] = len(models)
-    except Exception as exc:  # noqa: BLE001
-        JOB["error"] = str(exc)
+    except Exception:  # noqa: BLE001
+        JOB["error"] = "scrape failed — see server logs"
         log.exception("Scrape job failed")
     finally:
         scraper_log.removeHandler(handler)
@@ -306,6 +306,9 @@ function renderSparkline(data){
 
 const fmt = n => (n ?? 0).toLocaleString("ru-RU");
 const esc = s => (s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Only allow http(s) or same-origin relative URLs in href/src — blocks
+// javascript:/data: schemes from scraped data (defense in depth).
+const safeUrl = u => (typeof u === "string" && /^(https?:\/\/|\/)/i.test(u)) ? u : "#";
 const date = s => { if(!s) return '<span class="muted">—</span>'; const d=new Date(s); return isNaN(d)?'<span class="muted">—</span>':d.toLocaleDateString("ru-RU"); };
 
 // "Хайп" — индекс популярности из доступных сигналов (загрузки, лайки, свежесть).
@@ -351,7 +354,7 @@ function render(){
     // referrerpolicy=no-referrer is essential: image CDNs (bblmw, printables,
     // cults) block hot-linking by Referer; without it many previews 404.
     return src ? `<img class="thumb" loading="lazy" referrerpolicy="no-referrer"
-                    src="${esc(src)}" onerror="imgError(this)">`
+                    src="${esc(safeUrl(src))}" onerror="imgError(this)">`
                : `<div class="thumb noimg">нет фото</div>`;
   };
 
@@ -359,7 +362,7 @@ function render(){
     <tr>
       <td>${img(m)}</td>
       <td class="title">
-        <a href="${esc(m.source_url)}" target="_blank" rel="noopener">${esc(m.title)}</a>
+        <a href="${esc(safeUrl(m.source_url))}" target="_blank" rel="noopener">${esc(m.title)}</a>
         <button class="histbtn" onclick="toggleHistory(${m.id}, this)" title="История метрик">📈</button>
         ${m.description?`<div class="desc">${esc(m.description)}</div>`:""}
       </td>
@@ -539,7 +542,19 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    # Only these hostnames may reach the server. Blocks DNS-rebinding: a
+    # malicious site can't drive requests to the local dashboard via a rebound
+    # hostname, because the Host header won't be one of these.
+    _ALLOWED_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
+
+    def _host_allowed(self) -> bool:
+        host = (self.headers.get("Host") or "").rsplit(":", 1)[0].strip("[]").lower()
+        return host in self._ALLOWED_HOSTS
+
     def do_GET(self) -> None:  # noqa: N802
+        if not self._host_allowed():
+            self._send(b"Forbidden", "text/plain; charset=utf-8", 403)
+            return
         path = urlparse(self.path).path
         if path in ("/", "/index.html"):
             self._send(PAGE.encode("utf-8"), "text/html; charset=utf-8")
@@ -552,9 +567,9 @@ class Handler(BaseHTTPRequestHandler):
         elif path == "/api/models":
             try:
                 self._json(fetch_models())
-            except Exception as exc:  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 log.exception("API error")
-                self._json({"error": str(exc)}, 500)
+                self._json({"error": "internal error"}, 500)
         elif path == "/api/sources":
             self._json(sorted(SCRAPERS))
         elif path == "/api/history":
@@ -572,8 +587,19 @@ class Handler(BaseHTTPRequestHandler):
             self._send(b"Not found", "text/plain; charset=utf-8", 404)
 
     def do_POST(self) -> None:  # noqa: N802
+        # CSRF defense: reject non-local hosts, and require a JSON content type.
+        # A cross-site <form> POST cannot set application/json without triggering
+        # a CORS preflight, so this blocks drive-by requests to /api/clear etc.
+        if not self._host_allowed():
+            self._send(b"Forbidden", "text/plain; charset=utf-8", 403)
+            return
+        ctype = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+        if ctype != "application/json":
+            self._json({"error": "Content-Type must be application/json"}, 415)
+            return
         path = urlparse(self.path).path
-        length = int(self.headers.get("Content-Length") or 0)
+        # Cap the request body to avoid unbounded memory use.
+        length = min(int(self.headers.get("Content-Length") or 0), 1_000_000)
         try:
             data = json.loads(self.rfile.read(length) or b"{}") if length else {}
         except Exception:
@@ -602,9 +628,9 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 deleted = clear_models(source)
                 self._json({"deleted": deleted, "source": source})
-            except Exception as exc:  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 log.exception("Clear failed")
-                self._json({"error": str(exc)}, 500)
+                self._json({"error": "internal error"}, 500)
 
         else:
             self._send(b"Not found", "text/plain; charset=utf-8", 404)

@@ -89,11 +89,27 @@ def filter_rows(rows: list[dict], source: str | None = None, q: str | None = Non
     return out
 
 
+# Leading characters that Excel/LibreOffice interpret as a formula.
+_CSV_FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _csv_safe(value):
+    """Neutralize spreadsheet formula injection.
+
+    Scraped titles/fields are untrusted; a value like ``=HYPERLINK(...)`` or
+    ``=cmd|...`` would execute when the export is opened in a spreadsheet. We
+    prefix such values with a single quote so they're treated as plain text.
+    """
+    if isinstance(value, str) and value[:1] in _CSV_FORMULA_PREFIXES:
+        return "'" + value
+    return value
+
+
 def models_to_csv(rows: list[dict]) -> str:
     """Serialize model dicts to CSV text (header + one row per model)."""
     buf = io.StringIO()
     writer = csv.DictWriter(buf, fieldnames=EXPORT_FIELDS, extrasaction="ignore")
     writer.writeheader()
     for r in rows:
-        writer.writerow({k: r.get(k, "") for k in EXPORT_FIELDS})
+        writer.writerow({k: _csv_safe(r.get(k, "")) for k in EXPORT_FIELDS})
     return buf.getvalue()

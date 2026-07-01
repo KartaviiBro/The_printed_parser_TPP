@@ -3,12 +3,16 @@ services:
     build: .
     container_name: the-printed-parser
     ports:
-      - "8000:8000"
+      # Bind to loopback only — the dashboard has no auth and can clear the DB,
+      # so it must not be exposed on the host's network interfaces.
+      - "127.0.0.1:8000:8000"
     volumes:
       # Persist the SQLite database and downloaded images across restarts.
       - ./data:/app/data
     environment:
       - TPP_DATABASE_URL=sqlite:////app/data/database.db
+      # The container runs as root, where Chromium requires the sandbox off.
+      - TPP_NO_SANDBOX=1
     # Chromium needs a decent amount of shared memory.
     shm_size: "1gb"
     restart: unless-stopped

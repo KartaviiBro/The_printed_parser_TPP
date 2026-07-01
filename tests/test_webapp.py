@@ -43,6 +43,15 @@ def test_models_to_csv_has_header_and_rows():
     assert "Vase" in text and "Gear" in text
 
 
+def test_csv_neutralizes_formula_injection():
+    # A scraped title crafted as a spreadsheet formula must be defanged.
+    upsert_models([dict(source="printables", external_id="1", title="=HYPERLINK(1)",
+                        source_url="u1", downloads_count=1)])
+    text = webapp.models_to_csv(webapp.fetch_models())
+    assert "'=HYPERLINK(1)" in text          # prefixed with a quote
+    assert "\n=HYPERLINK" not in text          # never a bare leading '='
+
+
 def test_clear_models_also_removes_snapshots():
     upsert_models([dict(source="printables", external_id="1", title="A",
                         source_url="u1", downloads_count=5)])

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import abc
 import logging
+import os
 import random
 from contextlib import asynccontextmanager
 from dataclasses import asdict, dataclass
@@ -112,15 +113,18 @@ class BaseScraper(abc.ABC):
 
         stealth = _load_stealth()
 
+        # The Chromium sandbox is an important defense while loading untrusted
+        # pages, so we keep it ON by default. It's only disabled when explicitly
+        # opted in (e.g. running as root inside a container), via TPP_NO_SANDBOX=1.
+        launch_args = [
+            "--disable-blink-features=AutomationControlled",
+            "--disable-dev-shm-usage",
+        ]
+        if os.getenv("TPP_NO_SANDBOX") == "1":
+            launch_args.append("--no-sandbox")
+
         async with async_playwright() as p:
-            browser = await p.chromium.launch(
-                headless=self.headless,
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                ],
-            )
+            browser = await p.chromium.launch(headless=self.headless, args=launch_args)
             context = await browser.new_context(
                 user_agent=user_agent,
                 locale=self.locale,
